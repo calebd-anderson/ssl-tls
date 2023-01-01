@@ -40,6 +40,33 @@ int parse_url(char *uri, char **host, char **path) {
     return 0;
 }
 
+#define MAX_GET_COMMAND 255
+/**
+* Format and send HTTP get command. The return value will be 0
+* on success. -1 on failure, with errno set appropriately. The caller
+* must then retrieve the response.
+*/
+int http_get(int connection, const char *path, const char *host) {
+    static char get_command[MAX_GET_COMMAND];
+
+    sprintf(get_command, "GET /%s HTTP/1.1\r\n", path);
+    if(send(connection, get_command, strlen(get_command), 0) == -1) {
+        return -1;
+    }
+
+    sprintf(get_command, "Host: %s\r\n", host);
+    if(send(connection, get_command, strlen(get_command), 0) == -1) {
+        return -1;
+    }
+
+    sprintf(get_command, "Connection: close\r\n\r\n");
+    if(send(connection, get_command, strlen(get_command), 0) == -1) {
+        return -1;
+    }
+
+    return 0;
+}
+
 #define HTTP_PORT   80
 
 /**
