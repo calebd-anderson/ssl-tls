@@ -63,4 +63,35 @@ int main(int argc, char * argv[]) {
         return 1;
     }
     printf("Connecting to host '%s'\n", host);
+
+    // Step 1: open a socket connection on http port with the destination host.
+    #ifdef WIN32
+        if(WSAStartup(MAKEWORD(2, 2), &wsaData) != NO_ERROR) {
+            fprintf(stderr, "Error, unable to initialize winsock.\n");
+            return 2;
+        }
+    #endif // WIN32
+
+    client_connection = socket(PF_INET, SOCK_STREAM, 0);
+    if(!client_connection) {
+        perror("Unable to create local socket");
+        return 2;
+    }
+
+    host_name = gethostbyname(host);
+    if(!host_name) {
+        perror("Error in name resolution");
+        return 3;
+    }
+
+    host_address.sin_family = AF_INET;
+    host_address.sin_port = htons(HTTP_PORT);
+    memcpy(&host_address.sin_addr, host_name->h_addr_list[0], sizeof(struct in_addr));
+
+    if(connect(client_connection, (struct sockaddr *) &host_address, sizeof(host_address)) == -1) {
+        perror("Unable to connect to host");
+        return 4;
+    }
+
+    printf("Retrieving document: '%s'\n", path);
 }
