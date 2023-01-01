@@ -67,6 +67,22 @@ int http_get(int connection, const char *path, const char *host) {
     return 0;
 }
 
+#define BUFFER_SIZE 255
+/**
+* Receive all data available on a connection and dump it to stdout
+*/
+void display_result(int connection) {
+    int received = 0;
+    static char recv_buf[BUFFER_SIZE];
+
+    while((received = recv(connection, recv_buf, BUFFER_SIZE, 0)) > 0) {
+        recv_buf[received] = '\0';
+        printf("%s", recv_buf);
+    }
+
+    printf("\n");
+}
+
 #define HTTP_PORT   80
 
 /**
