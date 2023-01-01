@@ -94,4 +94,24 @@ int main(int argc, char * argv[]) {
     }
 
     printf("Retrieving document: '%s'\n", path);
+
+    http_get(client_connection, path, host);
+
+    display_result(client_connection);
+
+    printf("shutting down.\n");
+
+#ifdef WIN32
+    if(closesocket(client_connection) == -1)
+#else
+    if(close(client_connection) == -1)
+#endif // WIN32
+    {
+        perror("Error closing client connection");
+        return 5;
+    }
+#ifdef WIN32
+    WSACleanup();
+#endif // WIN32
+    return 0;
 }
