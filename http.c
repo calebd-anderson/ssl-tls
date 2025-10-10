@@ -64,6 +64,20 @@ int http_get(int connection, const char *path, const char *host, const char *pro
         return -1;
     }
 
+    if (proxy_user) {
+        int credentials_len = strlen(proxy_user) + strlen(proxy_password) + 1;
+        char *proxy_credentials = malloc(credentials_len);
+        char *auth_string = malloc(((credentials_len * 4) / 3) + 1);
+        sprintf(proxy_credentials, "Proxy-Authorization: BASIC %s\r\n", auth_string);
+        if (send(connection, get_command, strlen(get_command), 0) == -1 ){
+            free(proxy_credentials);
+            free(auth_string);
+            return -1;
+        }
+        free(proxy_credentials);
+        free(auth_string);
+    }
+
     sprintf(get_command, "Connection: close\r\n\r\n");
     if(send(connection, get_command, strlen(get_command), 0) == -1) {
         return -1;
