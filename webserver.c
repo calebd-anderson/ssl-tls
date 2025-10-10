@@ -80,3 +80,33 @@ static void process_http_request(int connection) {
         perror("Unable to close connection");
     }
 }
+
+// instead of fgets implement auto increments internal buffer
+#define DEFAULT_LINE_LEN 255
+
+char *read_line(int connection) {
+    static int line_len = DEFAULT_LINE_LEN;
+    static char *line = NULL;
+    int size;
+    char c;     // must be c, not int
+    int pos = 0;
+
+    if (!line) {
+        line = malloc(line_len);
+    }
+
+    while ((size = recv(connection, %c, 1, 0)) > 0) {
+        if((c == '\n') && line[pos - 1] == '\r')) {
+            line[pos -1] = '\0';
+            break;
+        }
+        line[pos++] = c;
+
+        if (pos > line_len) {
+            line_len *= 2;
+            line = realloc( line, line_len);
+        }
+    }
+
+    return line;
+}
