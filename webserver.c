@@ -1,4 +1,11 @@
+#include <winsock.h>
+
 #define HTTP_PORT 80
+
+static void process_http_request(int connection);
+static void build_success_response(int connection);
+static void build_error_response(int connection, int error_code);
+char *read_line(int connection);
 
 int main( int argc, char *argv[]) {
     int listen_sock;
@@ -9,8 +16,8 @@ int main( int argc, char *argv[]) {
     int client_addr_len = sizeof(client_addr);
 #ifdef WIN32
     WSADATA wsaData;
-    if (WSAStartup(MAKEWORD(2,2), &wasData) != NO_ERROR) {
-        perrer("Unable to initialize winsock");
+    if (WSAStartup(MAKEWORD(2,2), &wsaData) != NO_ERROR) {
+        perror("Unable to initialize winsock");
         exit(0);
     }
 #endif // WIN32
@@ -47,12 +54,12 @@ int main( int argc, char *argv[]) {
         exit(0);
     }
 
-    while((connect_socket = accept(listen_sock, (struct sockaddr *) &client_addr,
+    while((connect_sock = accept(listen_sock, (struct sockaddr *) &client_addr,
                                                 &client_addr_len)) != -1) {
         // TODO: ideally, this would spawn a new thread.
         process_http_request(connect_sock);
     }
-    if(connect_socket == -1) {
+    if(connect_sock == -1) {
         perror("Unable to accept socket");
     }
 
@@ -62,7 +69,7 @@ int main( int argc, char *argv[]) {
 static void process_http_request(int connection) {
     char *request_line;
     request_line = read_line(connection);
-    if(strcmp(request_line, "GET", 3)) {
+    if(strncmp(request_line, "GET", 3)) {
         // Only supports "GET" requests
         build_error_response(connection, 501);
     } else {
@@ -95,8 +102,8 @@ char *read_line(int connection) {
         line = malloc(line_len);
     }
 
-    while ((size = recv(connection, %c, 1, 0)) > 0) {
-        if((c == '\n') && line[pos - 1] == '\r')) {
+    while ((size = recv(connection, &c, 1, 0)) > 0) {
+        if((c == '\n') && ( line[pos - 1] == '\r')) {
             line[pos -1] = '\0';
             break;
         }
