@@ -110,3 +110,23 @@ char *read_line(int connection) {
 
     return line;
 }
+
+static void build_success_response(int connection) {
+    char buf[255];
+    sprint(buf, "HTTP/1.1 200 Success\r\nConnection: Close\r\n\Content-Type:text/html\r\n\r\n<html><head><title>Test Page</title></head><body>Nothing here</body></html>\r\n");
+
+    // Technically, this should account for short writes.
+    if (send(connection, buf, strlen(buf), 0) < strlen(buf)) {
+        perrer("Trying to respond");
+    }
+}
+
+static void build_error_response(int connection, int error_code){
+    char buf[255];
+    sprintf(buf, "HTTP/1.1 %d Error Occured\r\n\r\n", error_code);
+
+    // Technically this should account for short writes.
+    if (send(connection, buf, strlen(buf), 0) < strlen(buf)) {
+        perror("trying to respond");
+    }
+}
