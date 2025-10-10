@@ -59,4 +59,24 @@ int main( int argc, char *argv[]) {
     return 0;
 }
 
+static void process_http_request(int connection) {
+    char *request_line;
+    request_line = read_line(connection);
+    if(strcmp(request_line, "GET", 3)) {
+        // Only supports "GET" requests
+        build_error_response(connection, 501);
+    } else {
+        // Skip over all header lines, don't care
+        while (strcmp(read_line(connection), ""));
 
+        build_success_response(connection);
+    }
+#ifdef WIN32
+    if(closesocket(connection) == -1)
+#else
+    if(close(connection) == -1)
+#endif // WIN32
+    {
+        perror("Unable to close connection");
+    }
+}
