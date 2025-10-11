@@ -11,3 +11,10 @@ gcc -o webserver.exe webserver.c -lws2_32
 
 ### CMake
 https://cmake.org/download/
+
+```bash
+# generate the build system
+cmake -S ./project -B ./build
+# build the project
+cmake --build <build tree>
+```
