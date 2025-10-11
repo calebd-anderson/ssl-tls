@@ -1,4 +1,28 @@
+#ifdef WIN32
 #include <winsock.h>
+#else
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <unistd.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <unistd.h>
+#include <signal.h>
+#include <stdio.h>
+#include <string.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <sys/time.h>
+#include <stdlib.h>
+#include <memory.h>
+#include <ifaddrs.h>
+#include <net/if.h>
+#include <stdarg.h>
+/* the next two includes probably aren't relevant for you, but I typically use them all anyway */
+#include <math.h>
+#include <sys/termios.h>
+#endif
 
 #define HTTP_PORT 80
 
@@ -120,11 +144,11 @@ char *read_line(int connection) {
 
 static void build_success_response(int connection) {
     char buf[255];
-    sprint(buf, "HTTP/1.1 200 Success\r\nConnection: Close\r\n\Content-Type:text/html\r\n\r\n<html><head><title>Test Page</title></head><body>Nothing here</body></html>\r\n");
+    sprintf(buf, "HTTP/1.1 200 Success\r\nConnection: Close\r\nContent-Type:text/html\r\n\r\n<html><head><title>Test Page</title></head><body>Nothing here</body></html>\r\n");
 
     // Technically, this should account for short writes.
     if (send(connection, buf, strlen(buf), 0) < strlen(buf)) {
-        perrer("Trying to respond");
+        perror("Trying to respond");
     }
 }
 
