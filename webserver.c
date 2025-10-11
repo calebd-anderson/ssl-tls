@@ -1,5 +1,7 @@
 #ifdef WIN32
-#include <winsock.h>
+#include <winsock2.h>
+#include <stdio.h>
+#include <windows.h>
 #else
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -34,7 +36,11 @@ char *read_line(int connection);
 int main( int argc, char *argv[]) {
     int listen_sock;
     int connect_sock;
+#ifdef WIN32
+    char on;
+#else
     int on = 1;
+#endif
     struct sockaddr_in local_addr;
     struct sockaddr_in client_addr;
     int client_addr_len = sizeof(client_addr);
@@ -66,7 +72,7 @@ int main( int argc, char *argv[]) {
     //local_addr.sin_addr.s_addr = htonl(INADDR_ANY);
 
     if(bind(listen_sock,
-            (struct sockeaddr *) &local_addr,
+            (struct sockaddr *) &local_addr,
             sizeof(local_addr)) == -1)
     {
         perror("Unable to bind to local address");
