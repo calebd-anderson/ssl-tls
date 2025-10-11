@@ -54,3 +54,18 @@ dkms.conf
 # codeblocks generated
 *.depend
 *.layout
+*.cbp
+
+# CMake
+CMakeUserPresets.json
+# If in-source builds are used, exclude their output like so:
+build_debug/
+build_release/
+# Generated and user files
+**/CMakeCache.txt
+**/CMakeUserPresets.json
+**/CTestTestfile.cmake
+**/CPackConfig.cmake
+**/cmake_install.cmake
+**/install_manifest.txt
+**/compile_commands.json
