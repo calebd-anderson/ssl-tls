@@ -3,3 +3,8 @@ This source is my progress through the book by Joshua Davies: "[Implementing SSL
 ## Environment
  - Code::Blocks IDE
    - https://www.codeblocks.org/
+
+### Compile On Windows
+```
+gcc -o webserver.exe webserver.c -lws2_32
+```
