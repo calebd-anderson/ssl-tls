@@ -1,6 +1,3 @@
 add_subdirectory(lib)
-add_executable(http http.c)
-if (WIN32)
-    target_link_libraries(http ws2_32)
-endif()
-add_subdirectory(webserver EXCLUDE_FROM_ALL)
+add_subdirectory(webserver)
+add_subdirectory(http)

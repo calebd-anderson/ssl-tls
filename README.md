@@ -9,32 +9,27 @@ This source is my progress through the book by Joshua Davies: "[Implementing SSL
 ```bash
 # linux can omit linking ws2_32
 gcc -o webserver.exe ./src/webserver/webserver.c -lws2_32
-gcc -o http.exe ./src/http.c -lws2_32
+gcc -o http.exe ./src/http/http.c -lws2_32
 ```
 
 ## Build with [CMake](https://cmake.org/download/)
-### Build the Webserver
-```bash
-# generate a seperate webserver build system
-cmake -S ./src/webserver -B ./webserver_build
-# build the webserver target project
-cmake --build ./webserver_build -t webserver
-```
-### Build the HTTP client
+### Build the Webserver & HTTP Client
 ```bash
 # generate the build system
 cmake -S ./ -B ./build
 # build the main project
 cmake --build ./build
+# build just one target
+cmake --build ./build -t <webserver|http>
 ```
 ## Manual Test
 1. Start the webserver listening on port 80
 ```bash
-./webserver_build/Debug/webserver.exe
+./build/ssl-tls/webserver/Debug/webserver.exe
 ```
 2. In a new terminal make a request with the http client to `http://localhost/test`
 ```bash
-./build/src/Debug/http.exe http://localhost/test
+./build/ssl-tls/http/Debug/http.exe http://localhost/test
 # Connecting to host 'localhost'
 # Retrieving document: 'test'
 # HTTP/1.1 200 Success
