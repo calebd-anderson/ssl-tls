@@ -61,6 +61,7 @@ CMakeUserPresets.json
 # If in-source builds are used, exclude their output like so:
 build_debug/
 build_release/
+*build*
 # Generated and user files
 **/CMakeCache.txt
 **/CMakeUserPresets.json
