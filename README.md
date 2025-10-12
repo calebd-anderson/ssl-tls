@@ -44,3 +44,5 @@ cmake --build ./build -t <webserver|http>
 ```
 CTRL[CMD]+C
 ```
+## Free C/C++ IDE
+[Code::Blocks](https://www.codeblocks.org/)
