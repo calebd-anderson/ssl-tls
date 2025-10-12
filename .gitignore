@@ -56,6 +56,9 @@ dkms.conf
 *.layout
 *.cbp
 
+# VSCode
+.vscode
+
 # CMake
 CMakeUserPresets.json
 # If in-source builds are used, exclude their output like so:
