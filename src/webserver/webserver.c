@@ -9,7 +9,7 @@
 #else
 #include <netdb.h>
 #include <sys/socket.h>
-#include <netlinet/in.h>
+#include <netinet/in.h>
 #include <unistd.h>
 #endif // WIN32
 
