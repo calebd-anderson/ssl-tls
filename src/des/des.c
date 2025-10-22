@@ -81,3 +81,30 @@ static const int pc2_table[] = { 14, 17, 11, 24,  1,  5,
                                  30, 40, 51, 45, 33, 48,
                                  44, 49, 39, 56, 34, 53,
                                  46, 42, 50, 36, 29, 32 };
+
+// Listing 2-9: rotate left
+/**
+ * Perform the left rotation operation on the key. This is made fairly
+ * complex by the fact that the key is split into two 28-bit halves, each
+ * of which has to be rotated independently (so the second rotation operation
+ * starts in the middle of byte 3).
+ */
+static void ro1( unsigned char *target )
+{
+    int carry_left, carry_right;
+
+    carry_left = ( target[ 0 ] & 0x80 ) >> 3;
+
+    target[0] = ( target[0] << 1 ) | ( ( target[1] & 0x80 ) >> 7 );
+    target[1] = ( target[1] << 1 ) | ( ( target[2] & 0x80 ) >> 7 );
+    target[2] = ( target[2] << 1 ) | ( ( target[3] & 0x80 ) >> 7 );
+
+    // special handling for byte 3
+    carry_right = ( target[ 3 ] & 0x08 ) >> 3;
+    target[ 3 ] = ( ( ( target[ 3 ] << 1 ) |
+    (( target[ 4 ] & 0x80 ) >> 7 ) ) & ~0x10 ) | carry_left;
+
+    target[ 4 ] = ( target[ 4 ] << 1 ) | ((target[5] & 0x80) >> 7 );
+    target[5] = (target[5] << 1) | ((target[6] & 0x80) >> 7);
+    target[6] = (target[6] << 1) | carry_right;
+}
