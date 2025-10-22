@@ -13,14 +13,13 @@ gcc -o http.exe ./src/http/http.c -lws2_32
 ```
 
 ## Build with [CMake](https://cmake.org/download/)
-### Build the Webserver & HTTP Client
 ```bash
 # generate the build system
 cmake -S ./ -B ./build
 # build the main project
 cmake --build ./build
 # build just one target
-cmake --build ./build -t <webserver|http>
+cmake --build ./build -t <webserver|http|des|base64>
 ```
 ## Manual Test
 1. Start the webserver listening on port 80
