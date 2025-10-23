@@ -89,7 +89,7 @@ static const int pc2_table[] = { 14, 17, 11, 24,  1,  5,
  * of which has to be rotated independently (so the second rotation operation
  * starts in the middle of byte 3).
  */
-static void ro1( unsigned char *target )
+static void rol( unsigned char *target )
 {
     int carry_left, carry_right;
 
@@ -166,6 +166,23 @@ static const int p_table[] = { 16, 7, 20, 21,
                                19, 13, 30, 6,
                                22, 11, 4, 25 };
 
+static void ror(unsigned char *target) {
+    int carry_left, carry_right;
+
+    carry_right = (target[6] & 0x01) << 3;
+
+    target[6] = (target[6] >> 1) | ((target[5] & 0x01) << 7);
+    target[5] = (target[5] >> 1) | ((target[4] & 0x01) << 7);
+    target[4] = (target[4] >> 1) | ((target[3] & 0x01) << 7);
+
+    carry_left = (target[3] & 0x10) << 3;
+    target[3] = (((target[3] >> 1) | ((target[2] & 0x01) << 7)) & ~0x08) | carry_right;
+
+    target[2] = (target[2] >> 1) | ((target[3] & 0x01) << 7);
+    target[1] = (target[1] >> 1) | ((target[3] & 0x01) << 7);
+    target[0] = (target[0] >> 1) | carry_left;
+}
+
 // Listing 2-13: des_block_operate
 #define DES_BLOCK_SIZE 8    // 64 bits, defined in the standard
 #define DES_KEY_SIZE 8      // 56 bits used, but must supply 64 (8 are ignored)
@@ -173,9 +190,11 @@ static const int p_table[] = { 16, 7, 20, 21,
 #define PC1_KEY_SIZE 7
 #define SUBKEY_SIZE 6
 
+typedef enum { OP_ENCRYPT, OP_DECRYPT } op_type;
 static void des_block_operate(const unsigned char plaintext[DES_BLOCK_SIZE],
                               unsigned char ciphertext[ DES_BLOCK_SIZE ],
-                              const unsigned char key[DES_KEY_SIZE])
+                              const unsigned char key[DES_KEY_SIZE],
+                              op_type operation)
 {
     // Holding areas; result flows from plaintext, down through these.
     // finally into ciphertext. This could be made more memory efficient
@@ -204,14 +223,24 @@ static void des_block_operate(const unsigned char plaintext[DES_BLOCK_SIZE],
         
         // "Key mixing"
         // rotate both halves of the initial key
-        ro1(pc1key);
-        if(!(round <= 1 || round == 8 || round == 15)) {
-            // Rotate twice except in rounds 1, 2, 9 & 16
-            ro1(pc1key);
+        if (operation == OP_ENCRYPT)
+        {
+            rol(pc1key);
+            if(!(round <= 1 || round == 8 || round == 15)) {
+                // Rotate twice except in rounds 1, 2, 9 & 16
+                rol(pc1key);
+            }
         }
 
         permute(subkey, pc1key, pc2_table, SUBKEY_SIZE);
 
+        if (operation == OP_DECRYPT) {
+            ror(pc1key);
+            if(!(round >= 14 || round == 7 || round == 0)) {
+                // Rotate twice except in rounds 1, 2, 9 & 16
+                ror(pc1key);
+            }
+        }
         xor(expansion_block, subkey, 6);
 
         // Substitution; "copy" from update expansion block to ciphertext block

@@ -8,6 +8,6 @@ void permute(unsigned char target[],
                     const int permute_table[],
                     int len);
 
-void ro1( unsigned char *target );
+void rol( unsigned char *target );
 
 #endif
