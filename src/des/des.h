@@ -10,4 +10,11 @@ void permute(unsigned char target[],
 
 void rol( unsigned char *target );
 
+void ror(unsigned char *target);
+
+// void des_block_operate(const unsigned char plaintext[],
+//                               unsigned char ciphertext[],
+//                               const unsigned char key[],
+//                               op_type operation);
+
 #endif
