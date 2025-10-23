@@ -165,3 +165,81 @@ static const int p_table[] = { 16, 7, 20, 21,
                                32, 27, 3, 9,
                                19, 13, 30, 6,
                                22, 11, 4, 25 };
+
+// Listing 2-13: des_block_operate
+#define DES_BLOCK_SIZE 8    // 64 bits, defined in the standard
+#define DES_KEY_SIZE 8      // 56 bits used, but must supply 64 (8 are ignored)
+#define EXPANSION_BLOCK_SIZE 6
+#define PC1_KEY_SIZE 7
+#define SUBKEY_SIZE 6
+
+static void des_block_operate(const unsigned char plaintext[DES_BLOCK_SIZE],
+                              unsigned char ciphertext[ DES_BLOCK_SIZE ],
+                              const unsigned char key[DES_KEY_SIZE])
+{
+    // Holding areas; result flows from plaintext, down through these.
+    // finally into ciphertext. This could be made more memory efficient
+    // by reusing these.
+    unsigned char ip_block[ DES_BLOCK_SIZE ];
+    unsigned char expansion_block[ EXPANSION_BLOCK_SIZE ];
+    unsigned char substitution_block[ DES_BLOCK_SIZE / 2 ];
+    unsigned char pbox_target[ DES_BLOCK_SIZE / 2 ];
+    unsigned char recomb_box[ DES_BLOCK_SIZE / 2 ];
+
+    unsigned char pc1key[ PC1_KEY_SIZE ];
+    unsigned char subkey[ SUBKEY_SIZE ];
+    int round;
+    // Initial permutation
+    permute(ip_block, plaintext, ip_table, DES_BLOCK_SIZE);
+
+    // Key schedule computation
+    permute(pc1key, key, pc1_table, PC1_KEY_SIZE);
+    for (round = 0; round < 16; round++) {
+        // "Feistel function" on the first half of the block in 'ip_block'
+
+        // "Expansion". This permutaion only looks at the first
+        // four bytes (32 bits of ip_block); 16 of these are repeated
+        // in "expansion_table".
+        permute(expansion_block, ip_block + 4, expansion_table, 6);
+        
+        // "Key mixing"
+        // rotate both halves of the initial key
+        ro1(pc1key);
+        if(!(round <= 1 || round == 8 || round == 15)) {
+            // Rotate twice except in rounds 1, 2, 9 & 16
+            ro1(pc1key);
+        }
+
+        permute(subkey, pc1key, pc2_table, SUBKEY_SIZE);
+
+        xor(expansion_block, subkey, 6);
+
+        // Substitution; "copy" from update expansion block to ciphertext block
+        memset((void *) substitution_block, 0, DES_BLOCK_SIZE / 2);
+        substitution_block[0] = sbox[0][(expansion_block[0] & 0xFC) >> 2 ] << 4;
+        substitution_block[0] |= sbox[1][(expansion_block[0] & 0x03) << 4 | (expansion_block[1] & 0xF0) >> 4];
+        substitution_block[1] = sbox[2][(expansion_block[1] & 0x0F) << 2 | (expansion_block[2] & 0xC0) >> 6] << 4;
+        substitution_block[1] |= sbox[3][(expansion_block[2] & 0x3F)];
+        substitution_block[2] = sbox[4][(expansion_block[3] & 0xFC) >> 2] << 4;
+        substitution_block[2] |= sbox[5][(expansion_block[3] & 0x03) << 4 | (expansion_block[4] & 0xF0) >> 4];
+        substitution_block[3] = sbox[6][(expansion_block[4] & 0x0F) << 2 | (expansion_block[5] & 0xC0) >> 6] << 4;
+        substitution_block[3] |= sbox[7][(expansion_block[5] & 0x3F)];
+
+        // Permutation
+        permute(pbox_target, substitution_block, p_table, DES_BLOCK_SIZE / 2);
+
+        // Recombination. XOR the pbox with left half and then switch sides.
+        memcopy((void *) recomb_box, (void *) ip_block, DES_BLOCK_SIZE / 2);
+        memcopy((void *) ip_block, (void *) (ip_block + 4), DES_BLOCK_SIZE / 2);
+        xor(recomb_box, pbox_target, DES_BLOCK_SIZE / 2);
+        memcpy((void *)(ip_block + 4), (void *) recomb_box, DES_BLOCK_SIZE / 2);
+    }
+
+    // Swap one last time
+    memcpy((void *) recomb_box, (void *) ip_block, DES_BLOCK_SIZE / 2);
+    memcpy((void *) ip_block, (void *)(ip_block + 4), DES_BLOCK_SIZE / 2);
+    memcpy((void *) (ip_block + 4), (void *) recomb_box, DES_BLOCK_SIZE / 2);
+
+    // Final permutation (undo initial permutation)
+    permute(ciphertext, ip_block, fp_table, DES_BLOCK_SIZE);
+}
