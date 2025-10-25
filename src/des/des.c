@@ -1,3 +1,8 @@
+#include <assert.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+
 // this does not return a 1 for a 1 bit; it just returns non-zero
 #define GET_BIT(array, bit) (array[(int)(bit/8)] & (0x80 >> (bit % 8 )))
 #define SET_BIT(array, bit) (array[(int)(bit/8)] |= (0x80 >> (bit % 8)))
@@ -258,8 +263,8 @@ static void des_block_operate(const unsigned char plaintext[DES_BLOCK_SIZE],
         permute(pbox_target, substitution_block, p_table, DES_BLOCK_SIZE / 2);
 
         // Recombination. XOR the pbox with left half and then switch sides.
-        memcopy((void *) recomb_box, (void *) ip_block, DES_BLOCK_SIZE / 2);
-        memcopy((void *) ip_block, (void *) (ip_block + 4), DES_BLOCK_SIZE / 2);
+        memcpy((void *) recomb_box, (void *) ip_block, DES_BLOCK_SIZE / 2);
+        memcpy((void *) ip_block, (void *) (ip_block + 4), DES_BLOCK_SIZE / 2);
         xor(recomb_box, pbox_target, DES_BLOCK_SIZE / 2);
         memcpy((void *)(ip_block + 4), (void *) recomb_box, DES_BLOCK_SIZE / 2);
     }
@@ -287,9 +292,17 @@ static void des_operate(const unsigned char *input,
     while (input_len)
     {
         memcpy((void *) input_block, (void *) input, DES_BLOCK_SIZE);
-        xor(input_block, iv, DES_BLOCK_SIZE); // implement CBC
-        des_block_operate(input_block, output, key, operation);
-        memcpy((void *) iv, (void *) output, DES_BLOCK_SIZE); // CBC
+        if(operation == OP_ENCRYPT) {
+            xor(input_block, iv, DES_BLOCK_SIZE); // implement CBC
+            des_block_operate(input_block, output, key, operation);
+            memcpy((void *) iv, (void *) output, DES_BLOCK_SIZE); // CBC
+        }
+
+        if (operation == OP_DECRYPT) {
+            des_block_operate(input_block, output, key, operation);
+            xor(input_block, iv, DES_BLOCK_SIZE);
+            memcpy((void *) iv, (void *) output, DES_BLOCK_SIZE); // CBC
+        }
 
         input += DES_BLOCK_SIZE;
         output += DES_BLOCK_SIZE;
@@ -320,3 +333,44 @@ void des_encrypt(const unsigned char *plaintext,
 
     free(padded_plaintext);
 }
+
+void des_dectypt(const unsigned char *ciphertext,
+                 const int ciphertext_len,
+                 unsigned char *plaintext,
+                 const unsigned char *iv,
+                 const unsigned char *key)
+{
+    des_operate(ciphertext, ciphertext_len, plaintext, iv, key, OP_DECRYPT);
+    // Remove any padding on the end of the input
+    plaintext[ciphertext_len - plaintext[ciphertext_len-1]] = 0x0;
+}
+
+#ifdef TEST_DES
+int main(int argc, char *argv[]) {
+    unsigned char *key;
+    unsigned char *iv;
+    unsigned char *input;
+    unsigned char *output;
+    int out_len, input_len;
+
+    if (argc < 4) {
+        fprintf(stderr, "Usage: %s <key> <iv> <input>\n", argv[0]);
+        exit(0);
+    }
+
+    key = argv[1];
+    iv = argv[2];
+    input = argv[3];
+
+    out_len = input_len = strlen(input);
+    output = (unsigned char *) malloc(out_len + 1);
+    des_encrypt(input, input_len, output, iv, key);
+
+    while (out_len--) {
+        printf("%.02x", *output++);
+    }
+    printf("\n");
+
+    return 0;
+}
+#endif

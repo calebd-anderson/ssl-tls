@@ -10,6 +10,9 @@ This source is my progress through the book by Joshua Davies: "[Implementing SSL
 # linux can omit linking ws2_32
 gcc -o webserver.exe ./src/webserver/webserver.c -lws2_32
 gcc -o http.exe ./src/http/http.c -lws2_32
+# Test DES
+gcc -DTEST_DES -g -o des src/des/des.c
+./des.exe password initialz abcdefgh
 ```
 
 ## Build with [CMake](https://cmake.org/download/)
