@@ -272,3 +272,47 @@ static void des_block_operate(const unsigned char plaintext[DES_BLOCK_SIZE],
     // Final permutation (undo initial permutation)
     permute(ciphertext, ip_block, fp_table, DES_BLOCK_SIZE);
 }
+
+static void des_operate(const unsigned char *input,
+                        int input_len,
+                        unsigned char *output,
+                        const unsigned char *key,
+                        op_type operation)
+{
+    unsigned char input_block[DES_BLOCK_SIZE];
+
+    assert(!(input_len % DES_BLOCK_SIZE));
+
+    while (input_len)
+    {
+        memcpy((void *) input_block, (void *) input, DES_BLOCK_SIZE);
+        des_block_operate(input_block, output, key, operation);
+
+        input += DES_BLOCK_SIZE;
+        output += DES_BLOCK_SIZE;
+        input_len -= DES_BLOCK_SIZE;
+    }
+}
+
+// Listing 2-17: des_encrypt with NIST 800-3A padding
+void des_encrypt(const unsigned char *plaintext,
+                 const int plaintext_len,
+                 unsigned char *ciphertext,
+                 const unsigned char *key)
+{
+    unsigned char *padded_plaintext;
+    int padding_len;
+
+    // First, pad the input to a multiple of DES_BLOCK_SIZE
+
+    padding_len = DES_BLOCK_SIZE - (plaintext_len % DES_BLOCK_SIZE);
+    padded_plaintext = malloc(plaintext_len + padding_len);
+    // This implements PKCS #5 padding. (just uncomment next line)
+    // memset(padded_plaintext, padding_len, plaintext_len + padding_len);
+    
+    memcpy(padded_plaintext, plaintext, plaintext_len);
+    
+    des_operate(padded_plaintext, plaintext_len + padding_len, ciphertext, key, OP_ENCRYPT);
+
+    free(padded_plaintext);
+}
