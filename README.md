@@ -11,8 +11,11 @@ This source is my progress through the book by Joshua Davies: "[Implementing SSL
 gcc -o webserver.exe ./src/webserver/webserver.c -lws2_32
 gcc -o http.exe ./src/http/http.c -lws2_32
 # Test DES
-gcc -DTEST_DES -g -o des src/des/des.c
-./des.exe password initialz abcdefgh
+gcc -DTEST_DES -g -o des -Isrc/hex src/des/des.c src/hex/hex.c
+./des.exe -e password initialz abcdefgh
+# 71828547387b18e5
+./des.exe -d password initialz 0x71828547387b18e5
+# broken
 ```
 
 ## Build with [CMake](https://cmake.org/download/)
@@ -22,7 +25,7 @@ cmake -S ./ -B ./build
 # build the main project
 cmake --build ./build
 # build just one target
-cmake --build ./build -t <webserver|http|des|base64>
+cmake --build ./build [-t <webserver|http|des|base64>]
 ```
 ## Manual Test
 1. Start the webserver listening on port 80

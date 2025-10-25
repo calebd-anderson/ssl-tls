@@ -24,7 +24,7 @@ void ror(unsigned char *target);
 //                         const unsigned char *key,
 //                         op_type operation);
 
-void des_dectypt(const unsigned char *ciphertext,
+void des_decrypt(const unsigned char *ciphertext,
                  const int ciphertext_len,
                  unsigned char *plaintext,
                  const unsigned char *iv,
