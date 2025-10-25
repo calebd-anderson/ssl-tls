@@ -15,7 +15,7 @@ gcc -DTEST_DES -g -o des -Isrc/hex src/des/des.c src/hex/hex.c
 ./des.exe -e password initialz abcdefgh
 # 71828547387b18e5
 ./des.exe -d password initialz 0x71828547387b18e5
-# broken
+# 6162636465666768 (hex encoded)
 ```
 
 ## Build with [CMake](https://cmake.org/download/)
@@ -25,7 +25,7 @@ cmake -S ./ -B ./build
 # build the main project
 cmake --build ./build
 # build just one target
-cmake --build ./build [-t <webserver|http|des|base64>]
+cmake --build ./build [-t <webserver|http|des|base64|hex>]
 ```
 ## Manual Test
 1. Start the webserver listening on port 80

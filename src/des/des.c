@@ -112,10 +112,7 @@ static void rol(unsigned char *target)
 
     // special handling for byte 3
     carry_right = (target[3] & 0x08) >> 3;
-    target[3] = (((target[3] << 1) |
-                  ((target[4] & 0x80) >> 7)) &
-                 ~0x10) |
-                carry_left;
+    target[3] = (((target[3] << 1) | ((target[4] & 0x80) >> 7)) & ~0x10) | carry_left;
 
     target[4] = (target[4] << 1) | ((target[5] & 0x80) >> 7);
     target[5] = (target[5] << 1) | ((target[6] & 0x80) >> 7);
@@ -318,8 +315,8 @@ static void des_operate(const unsigned char *input,
         if (operation == OP_DECRYPT)
         {
             des_block_operate(input_block, output, key, operation);
-            xor(input_block, iv, DES_BLOCK_SIZE);
-            memcpy((void *)iv, (void *)output, DES_BLOCK_SIZE); // CBC
+            xor(output, iv, DES_BLOCK_SIZE);
+            memcpy((void *)iv, (void *)input, DES_BLOCK_SIZE); // CBC
         }
 
         input += DES_BLOCK_SIZE;
