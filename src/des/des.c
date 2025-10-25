@@ -276,6 +276,7 @@ static void des_block_operate(const unsigned char plaintext[DES_BLOCK_SIZE],
 static void des_operate(const unsigned char *input,
                         int input_len,
                         unsigned char *output,
+                        const unsigned char *iv,
                         const unsigned char *key,
                         op_type operation)
 {
@@ -286,7 +287,9 @@ static void des_operate(const unsigned char *input,
     while (input_len)
     {
         memcpy((void *) input_block, (void *) input, DES_BLOCK_SIZE);
+        xor(input_block, iv, DES_BLOCK_SIZE); // implement CBC
         des_block_operate(input_block, output, key, operation);
+        memcpy((void *) iv, (void *) output, DES_BLOCK_SIZE); // CBC
 
         input += DES_BLOCK_SIZE;
         output += DES_BLOCK_SIZE;
@@ -298,6 +301,7 @@ static void des_operate(const unsigned char *input,
 void des_encrypt(const unsigned char *plaintext,
                  const int plaintext_len,
                  unsigned char *ciphertext,
+                 const unsigned char *iv,
                  const unsigned char *key)
 {
     unsigned char *padded_plaintext;
@@ -312,7 +316,7 @@ void des_encrypt(const unsigned char *plaintext,
     
     memcpy(padded_plaintext, plaintext, plaintext_len);
     
-    des_operate(padded_plaintext, plaintext_len + padding_len, ciphertext, key, OP_ENCRYPT);
+    des_operate(padded_plaintext, plaintext_len + padding_len, ciphertext, iv, key, OP_ENCRYPT);
 
     free(padded_plaintext);
 }
