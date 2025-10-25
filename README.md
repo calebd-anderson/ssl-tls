@@ -5,20 +5,8 @@ This source is my progress through the book by Joshua Davies: "[Implementing SSL
 - [VSCode](https://code.visualstudio.com/download)
   - [Windows](https://code.visualstudio.com/docs/cpp/config-mingw)
   - [Linux](https://code.visualstudio.com/docs/cpp/config-linux)
-### Manual Compilation
-```bash
-# linux can omit linking ws2_32
-gcc -o webserver.exe ./src/webserver/webserver.c -lws2_32
-gcc -o http.exe ./src/http/http.c -lws2_32
-# Test DES
-gcc -DTEST_DES -g -o des -Isrc/hex src/des/des.c src/hex/hex.c
-./des.exe -e password initialz abcdefgh
-# 71828547387b18e5
-./des.exe -d password initialz 0x71828547387b18e5
-# 6162636465666768 (hex encoded)
-```
 
-## Build with [CMake](https://cmake.org/download/)
+## Build the project with [CMake](https://cmake.org/download/)
 ```bash
 # generate the build system
 cmake -S ./ -B ./build
@@ -28,6 +16,13 @@ cmake --build ./build
 cmake --build ./build [-t <webserver|http|des|base64|hex>]
 ```
 ## Manual Test
+### HTTP Client/Server
+#### Manual Compilation
+```bash
+# linux can omit linking ws2_32
+gcc -o webserver.exe ./src/webserver/webserver.c -lws2_32
+gcc -o http.exe ./src/http/http.c -lws2_32
+```
 1. Start the webserver listening on port 80
 ```bash
 ./build/ssl-tls/webserver/Debug/webserver.exe
@@ -49,5 +44,17 @@ cmake --build ./build [-t <webserver|http|des|base64|hex>]
 ```
 CTRL[CMD]+C
 ```
-## Free C/C++ IDE
+
+### DES
+DES is a library yet holds a test routine that can be enabled with `-DTEST_DES`.
+```sh
+# Manual compilation
+gcc -DTEST_DES -g -o des -Isrc/hex src/des/des.c src/hex/hex.c
+./des.exe -e password initialz abcdefgh
+# 71828547387b18e5
+./des.exe -d password initialz 0x71828547387b18e5
+# 6162636465666768 (hex encoded)
+```
+## Misc
+### Free C/C++ IDE
 [Code::Blocks](https://www.codeblocks.org/)
