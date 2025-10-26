@@ -47,7 +47,8 @@ CTRL[CMD]+C
 
 ### DES
 DES is a library yet holds a test routine that can be enabled with `-DTEST_DES`.  
-The `key` and initialization vector (`iv`) must be eight bytes and the `input` must be a multiple of eight bytes
+> [!IMPORTANT]
+> The `key` and initialization vector (`iv`) must be eight bytes and the `input` must be a multiple of eight bytes.
 ```sh
 # Manual compilation
 gcc -DTEST_DES -g -o des -Isrc/hex src/des/des.c src/hex/hex.c
