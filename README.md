@@ -51,7 +51,7 @@ DES is a library yet holds a test routine that can be enabled with `-DTEST_DES`.
 > The `key` and initialization vector (`iv`) must be eight bytes and the `input` must be a multiple of eight bytes.
 ```sh
 # Manual compilation
-gcc -DTEST_DES -g -o des -Isrc/hex src/des/des.c src/hex/hex.c
+gcc -DTEST_DES -g -o des -Isrc/lib/hex src/lib/des/des.c src/lib/hex/hex.c
 # ./des.exe [-e|-d] <key> <iv> <input>
 ./des.exe -e password initialz abcdefgh
 # 71828547387b18e5
