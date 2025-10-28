@@ -4,11 +4,11 @@
 void xor(unsigned char *target, const unsigned char *src, int len);
 
 void permute(unsigned char target[],
-                    const unsigned char src[],
-                    const int permute_table[],
-                    int len);
+             const unsigned char src[],
+             const int permute_table[],
+             int len);
 
-void rol( unsigned char *target );
+void rol(unsigned char *target);
 
 void ror(unsigned char *target);
 
@@ -24,15 +24,27 @@ void ror(unsigned char *target);
 //                         const unsigned char *key,
 //                         op_type operation);
 
+void des_encrypt(const unsigned char *plaintext,
+                 const int plaintext_len,
+                 unsigned char *ciphertext,
+                 const unsigned char *iv,
+                 const unsigned char *key);
+
+void des3_encrypt(const unsigned char *plaintext,
+                 const int plaintext_len,
+                 unsigned char *ciphertext,
+                 const unsigned char *iv,
+                 const unsigned char *key);
+
 void des_decrypt(const unsigned char *ciphertext,
                  const int ciphertext_len,
                  unsigned char *plaintext,
                  const unsigned char *iv,
                  const unsigned char *key);
 
-void des_encrypt(const unsigned char *plaintext,
-                 const int plaintext_len,
-                 unsigned char *ciphertext,
+void des3_decrypt(const unsigned char *ciphertext,
+                 const int ciphertext_len,
+                 unsigned char *plaintext,
                  const unsigned char *iv,
                  const unsigned char *key);
 
