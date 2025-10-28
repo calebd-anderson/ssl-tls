@@ -296,7 +296,8 @@ static void des_operate(const unsigned char *input,
                         unsigned char *output,
                         const unsigned char *iv,
                         const unsigned char *key,
-                        op_type operation)
+                        op_type operation,
+                        int triplicate)
 {
     unsigned char input_block[DES_BLOCK_SIZE];
 
@@ -309,12 +310,26 @@ static void des_operate(const unsigned char *input,
         {
             xor(input_block, iv, DES_BLOCK_SIZE); // implement CBC
             des_block_operate(input_block, output, key, operation);
+            if (triplicate) {
+                memcpy(input_block, output, DES_BLOCK_SIZE);
+                des_block_operate(input_block, output, key + DES_KEY_SIZE, OP_DECRYPT);
+                memcpy(input_block, output, DES_BLOCK_SIZE);
+                des_block_operate(input_block, output, key + (DES_KEY_SIZE * 2), operation);
+            }
             memcpy((void *)iv, (void *)output, DES_BLOCK_SIZE); // CBC
         }
 
         if (operation == OP_DECRYPT)
         {
-            des_block_operate(input_block, output, key, operation);
+            if (triplicate) {
+                des_block_operate(input_block, output, key + (DES_KEY_SIZE * 2), operation);
+                memcpy(input_block, output, DES_BLOCK_SIZE);
+                des_block_operate(input_block, output, key + DES_KEY_SIZE, OP_ENCRYPT);
+                memcpy(input_block, output, DES_BLOCK_SIZE);
+                des_block_operate(input_block, output, key, operation);
+            } else {
+                des_block_operate(input_block, output, key, operation);
+            }
             xor(output, iv, DES_BLOCK_SIZE);
             memcpy((void *)iv, (void *)input, DES_BLOCK_SIZE); // CBC
         }
@@ -350,7 +365,36 @@ void des_encrypt(const unsigned char *plaintext,
     // memcpy(padded_plaintext, plaintext, plaintext_len);
 
     // des_operate(padded_plaintext, plaintext_len + padding_len, ciphertext, iv, key, OP_ENCRYPT);
-    des_operate(plaintext, plaintext_len, ciphertext, iv, key, OP_ENCRYPT);
+    des_operate(plaintext, plaintext_len, ciphertext, iv, key, OP_ENCRYPT, 0);
+
+    // free(padded_plaintext);
+}
+
+void des3_encrypt(const unsigned char *plaintext,
+                 const int plaintext_len,
+                 unsigned char *ciphertext,
+                 const unsigned char *iv,
+                 const unsigned char *key)
+{
+    // unsigned char *padded_plaintext;
+    // int padding_len;
+
+    // // First, pad the input to a multiple of DES_BLOCK_SIZE
+
+    // padding_len = DES_BLOCK_SIZE - (plaintext_len % DES_BLOCK_SIZE);
+    // padded_plaintext = malloc(plaintext_len + padding_len);
+    
+    // // This implements NIST 800-3A padding
+    // memset(padded_plaintext, 0x0, plaintext_len + padding_len);
+    // padded_plaintext[plaintext_len] = 0x80;
+
+    // // This implements PKCS #5 padding. (just uncomment next line)
+    // // memset(padded_plaintext, padding_len, plaintext_len + padding_len);
+
+    // memcpy(padded_plaintext, plaintext, plaintext_len);
+
+    // des_operate(padded_plaintext, plaintext_len + padding_len, ciphertext, iv, key, OP_ENCRYPT, 1);
+    des_operate(plaintext, plaintext_len, ciphertext, iv, key, OP_ENCRYPT, 1);
 
     // free(padded_plaintext);
 }
@@ -362,7 +406,18 @@ void des_decrypt(const unsigned char *ciphertext,
                  const unsigned char *iv,
                  const unsigned char *key)
 {
-    des_operate(ciphertext, ciphertext_len, plaintext, iv, key, OP_DECRYPT);
+    des_operate(ciphertext, ciphertext_len, plaintext, iv, key, OP_DECRYPT, 0);
+    // Remove any padding on the end of the input
+    // plaintext[ciphertext_len - plaintext[ciphertext_len - 1]] = 0x0;
+}
+
+void des3_decrypt(const unsigned char *ciphertext,
+                 const int ciphertext_len,
+                 unsigned char *plaintext,
+                 const unsigned char *iv,
+                 const unsigned char *key)
+{
+    des_operate(ciphertext, ciphertext_len, plaintext, iv, key, OP_DECRYPT, 1);
     // Remove any padding on the end of the input
     // plaintext[ciphertext_len - plaintext[ciphertext_len - 1]] = 0x0;
 }
@@ -392,12 +447,20 @@ int main(int argc, char *argv[])
 
     if (!(strcmp(argv[1], "-e")))
     {
-        des_encrypt(input, input_len, output, iv, key);
+        if (key_len == 24) {
+            des3_encrypt(input, input_len, output, iv, key);
+        } else {
+            des_encrypt(input, input_len, output, iv, key);
+        }
         show_hex(output, out_len);
     }
     else if (!(strcmp(argv[1], "-d")))
     {
-        des_decrypt(input, input_len, output, iv, key);
+        if (key_len == 24) {
+            des3_decrypt(input, input_len, output, iv, key);
+        } else {
+            des_decrypt(input, input_len, output, iv, key);
+        }
         show_hex(output, out_len);
     }
     else

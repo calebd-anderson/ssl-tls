@@ -53,10 +53,20 @@ DES is a library yet holds a test routine that can be enabled with `-DTEST_DES`.
 # Manual compilation
 gcc -DTEST_DES -g -o des -Isrc/lib/hex src/lib/des/des.c src/lib/hex/hex.c
 # ./des.exe [-e|-d] <key> <iv> <input>
+```
+```sh
+# DES
 ./des.exe -e password initialz abcdefgh
 # 71828547387b18e5
 ./des.exe -d password initialz 0x71828547387b18e5
-# 6162636465666768 (hex encoded)
+# 6162636465666768
+```
+```sh
+# DES3
+./des -e twentyfourcharacterinput initialz abcdefgh
+# c0c48bc47e87ce17
+./des -d twentyfourcharacterinput initialz 0xc0c48bc47e87ce17
+# 6162636465666768
 ```
 Decode hex at [CyberChef](https://cyberchef.org/#recipe=From_Hex('None')).
 ## Misc
