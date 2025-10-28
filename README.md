@@ -45,10 +45,10 @@ gcc -o http.exe ./src/http/http.c -lws2_32
 CTRL[CMD]+C
 ```
 
-### DES
-DES is a library yet holds a test routine that can be enabled with `-DTEST_DES`.  
+### [DES](https://en.wikipedia.org/wiki/Data_Encryption_Standard)
+DES is intended to be used as a library. Yet, a test routine is included that can be enabled with `-DTEST_DES`.  
 > [!IMPORTANT]
-> The `key` and initialization vector (`iv`) must be eight bytes and the `input` must be a multiple of eight bytes.
+> DES is an 8 byte block cipher, thus, the `key` and initialization vector (`iv`) must be 8 bytes and the `input` must be a multiple of 8 bytes.
 ```sh
 # Manual compilation
 gcc -DTEST_DES -g -o des -Isrc/lib/hex src/lib/des/des.c src/lib/hex/hex.c
@@ -61,6 +61,8 @@ gcc -DTEST_DES -g -o des -Isrc/lib/hex src/lib/des/des.c src/lib/hex/hex.c
 ./des.exe -d password initialz 0x71828547387b18e5
 # 6162636465666768
 ```
+> [!NOTE]
+> DES3 uses a 24 byte (8 * 3) `key`.
 ```sh
 # DES3
 ./des -e twentyfourcharacterinput initialz abcdefgh
