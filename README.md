@@ -45,7 +45,7 @@ gcc -o http.exe ./src/http/http.c -lws2_32
 CTRL[CMD]+C
 ```
 
-### [DES](https://en.wikipedia.org/wiki/Data_Encryption_Standard)
+### [DES](https://csrc.nist.gov/pubs/fips/46-3/final)
 DES is intended to be used as a library. Yet, a test routine is included that can be enabled with `-DTEST_DES`.  
 > [!IMPORTANT]
 > DES is an 8 byte block cipher, thus, the `key` and initialization vector (`iv`) must be 8 bytes and the `input` must be a multiple of 8 bytes.
@@ -71,6 +71,12 @@ gcc -DTEST_DES -g -o des -Isrc/lib/hex src/lib/des/des.c src/lib/hex/hex.c
 # 6162636465666768
 ```
 Decode hex at [CyberChef](https://cyberchef.org/#recipe=From_Hex('None')).
+
+### [AES](https://csrc.nist.gov/pubs/fips/197/final)
+```sh
+# AES ...
+```
+
 ## Misc
 ### Free C/C++ IDE
 [Code::Blocks](https://www.codeblocks.org/)
