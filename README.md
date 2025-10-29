@@ -53,7 +53,7 @@ CTRL[CMD]+C
 gcc -DTEST_DES -g -o des -Isrc/lib/hex src/lib/des/des.c src/lib/hex/hex.c
 ```
 > [!IMPORTANT]
-> DES is an 8 byte block cipher. Thus, the `key` and initialization vector (`iv`) must be 8 bytes and the `input` must be a multiple of 8 bytes.
+> DES is an 8 byte block cipher. Hence, the `key` and initialization vector (`iv`) must be 8 bytes and the `input` must be a multiple of 8 bytes.
 ```sh
 # DES
 # ./des.exe [-e|-d] <key> <iv> <input>
