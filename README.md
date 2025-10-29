@@ -45,17 +45,18 @@ gcc -o http.exe ./src/http/http.c -lws2_32
 CTRL[CMD]+C
 ```
 
-### [DES](https://csrc.nist.gov/pubs/fips/46-3/final)
-DES is intended to be used as a library. Yet, a test routine is included that can be enabled with `-DTEST_DES`.  
-> [!IMPORTANT]
-> DES is an 8 byte block cipher, thus, the `key` and initialization vector (`iv`) must be 8 bytes and the `input` must be a multiple of 8 bytes.
+### [Data Encryption Standard (DES)](https://csrc.nist.gov/pubs/fips/46-3/final)
+> [!NOTE]
+> DES is intended to be used as a library. Yet, a test routine is included that can be enabled with the compiler option `-DTEST_DES`.  
 ```sh
 # Manual compilation
 gcc -DTEST_DES -g -o des -Isrc/lib/hex src/lib/des/des.c src/lib/hex/hex.c
-# ./des.exe [-e|-d] <key> <iv> <input>
 ```
+> [!IMPORTANT]
+> DES is an 8 byte block cipher. Thus, the `key` and initialization vector (`iv`) must be 8 bytes and the `input` must be a multiple of 8 bytes.
 ```sh
 # DES
+# ./des.exe [-e|-d] <key> <iv> <input>
 ./des.exe -e password initialz abcdefgh
 # 71828547387b18e5
 ./des.exe -d password initialz 0x71828547387b18e5
@@ -70,9 +71,10 @@ gcc -DTEST_DES -g -o des -Isrc/lib/hex src/lib/des/des.c src/lib/hex/hex.c
 ./des -d twentyfourcharacterinput initialz 0xc0c48bc47e87ce17
 # 6162636465666768
 ```
-Decode hex at [CyberChef](https://cyberchef.org/#recipe=From_Hex('None')).
+> [!TIP]
+> Decode hex at [CyberChef](https://cyberchef.org/#recipe=From_Hex('None')).
 
-### [AES](https://csrc.nist.gov/pubs/fips/197/final)
+### [Advanced Encryption Standard (AES)](https://csrc.nist.gov/pubs/fips/197/final)
 ```sh
 # AES ...
 ```
