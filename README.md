@@ -63,7 +63,7 @@ gcc -DTEST_DES -g -o des -Isrc/lib/hex src/lib/des/des.c src/lib/hex/hex.c
 # 6162636465666768
 ```
 > [!NOTE]
-> DES3 uses a 24 byte (8 * 3) `key`.
+> DES3 uses a 24 byte ($8*3$) `key`.
 ```sh
 # DES3
 ./des -e twentyfourcharacterinput initialz abcdefgh
