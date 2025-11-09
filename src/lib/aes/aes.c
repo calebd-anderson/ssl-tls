@@ -66,3 +66,31 @@ static void rot_word(unsigned char *w) {
     w[2] = w[3];
     w[3] = tmp;
 }
+
+static void compute_key_schedule(const unsigned char *key, int key_length, unsigned char w[][4]) {
+    int i;
+    int key_words = key_length >> 2;
+    unsigned char rcon = 0x01;
+
+    // First, copy the key directly into the key schedule
+    memcpy(w, key, key_length);
+    for (i = key_words; i < 4 * (key_words + 7) ; i++) {
+        memcpy (w[i], w[i - 1], 4);
+        if (!(i % key_words)) {
+            rot_word(w[i]);
+            sub_word(w[i]);
+            if(!(i % 36)) {
+                rcon = 0x1b;
+            }
+            w[i][0] ^= rcon;
+            rcon <<= 1;
+        }
+        else if ((key_words > 6) && ((i % key_words) == 4)) {
+            sub_word(w[i]);
+        }
+        w[i][0] ^= w[i - key_words][0];
+        w[i][1] ^= w[i - key_words][1];
+        w[i][2] ^= w[i - key_words][2];
+        w[i][3] ^= w[i - key_words][3];
+    }
+}
