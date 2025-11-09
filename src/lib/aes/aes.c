@@ -49,3 +49,20 @@ static unsigned char sbox[16][16] = {
     {0x8c, 0xa1, 0x89, 0x0d, 0xbf, 0xe6, 0x42, 0x68,
     0x41, 0x99, 0x2d, 0x0f, 0xb0, 0x54, 0xbb, 0x16}
 };
+
+static void sub_word(unsigned char *w) {
+    int i = 0;
+    for (i = 0; i < 4; i++) {
+        w[i] = sbox[(w[i] & 0xF0) >> 4][w[i] & 0x0F];
+    }
+}
+
+static void rot_word(unsigned char *w) {
+    unsigned char tmp;
+
+    tmp = w[0];
+    w[0] = w[1];
+    w[1] = w[2];
+    w[2] = w[3];
+    w[3] = tmp;
+}
