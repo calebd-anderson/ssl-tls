@@ -94,3 +94,12 @@ static void compute_key_schedule(const unsigned char *key, int key_length, unsig
         w[i][3] ^= w[i - key_words][3];
     }
 }
+
+static void add_round_key(unsigned char state[][4], unsigned char w[][4]) {
+    int c, r;
+    for (c = 0; c< 4; c++) {
+        for (r = 0; r < 4; r++) {
+            state[r][c] = state[r][c] ^ w[c][r];
+        }
+    }
+}
