@@ -103,3 +103,11 @@ static void add_round_key(unsigned char state[][4], unsigned char w[][4]) {
         }
     }
 }
+
+// Listing 2-34: sub_bytes
+static void sub_bytes(unsigned char state[][4]) {
+    int r, c;
+    for (r = 0; r<4; r++) {
+        state[r][c] = sbox[(state[r][c] & 0xF0) >> 4][state[r][c] & 0x0F];
+    }
+}
