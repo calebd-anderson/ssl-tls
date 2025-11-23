@@ -111,3 +111,26 @@ static void sub_bytes(unsigned char state[][4]) {
         state[r][c] = sbox[(state[r][c] & 0xF0) >> 4][state[r][c] & 0x0F];
     }
 }
+
+// Listing 2-35: shift_rows
+static void shift_rows(unsigned char state[][4]) {
+    int tmp;
+
+    tmp = state[1][0];
+    state[1][0] = state[1][1];
+    state[1][1] = state[1][2];
+    state[1][2] = state[1][3];
+    state[1][3] = tmp;
+
+    tmp = state[2][0];
+    state[2][0] = state[2][2];
+    state[2][2] = tmp;
+    state[2][1] = state[2][3];
+    state[2][3] = tmp;
+
+    tmp = state[3][3];
+    state[3][3] = state[3][2];
+    state[3][2] = state[3][1];
+    state[3][1] = state[3][0];
+    state[3][0] = tmp;
+}
