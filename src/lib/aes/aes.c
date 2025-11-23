@@ -134,3 +134,19 @@ static void shift_rows(unsigned char state[][4]) {
     state[3][1] = state[3][0];
     state[3][0] = tmp;
 }
+
+// Listing 2-36: matrix multiplication
+static void matrix_multiply(unsigned char m1[4][4], unsigned char m2[4][4], unsigned char target[4][4]) {
+    int r, c;
+    for (r = 0; r < 4; r++) {
+        for (c = 0; c < 4; c++) {
+            target[r][c] =
+            m1[r][0] * m2[0][c] +
+            m1[r][1] * m2[1][c] +
+            m1[r][2] * m2[2][c] +
+            m1[r][3] * m2[3][c];
+        }
+    }
+}
+
+
