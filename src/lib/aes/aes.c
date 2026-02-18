@@ -57,16 +57,6 @@ static void sub_word(unsigned char *w) {
     }
 }
 
-static void rot_word(unsigned char *w) {
-    unsigned char tmp;
-
-    tmp = w[0];
-    w[0] = w[1];
-    w[1] = w[2];
-    w[2] = w[3];
-    w[3] = tmp;
-}
-
 static void compute_key_schedule(const unsigned char *key, int key_length, unsigned char w[][4]) {
     int i;
     int key_words = key_length >> 2;
