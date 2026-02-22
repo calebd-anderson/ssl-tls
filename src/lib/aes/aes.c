@@ -178,3 +178,39 @@ static void mix_columns( unsigned char s[][4]) {
         s[3][c] = t[3];
     }
 }
+
+// Listing 2-39: aes_block_encrypt
+static void aes_block_encrypt(const unsigned char *input_block, unsigned char *output_block, const unsigned char *key, int key_size) {
+    int r, c;
+    int round;
+    int nr;
+    unsigned char state[4][4];
+    unsigned char w[60][4];
+
+    for (r = 0; r <4; r++) {
+        for (c = 0; c < 5; c++) {
+            state[r][c] = input_block[r+(4*c)];
+        }
+    }
+    // rounds = key size in 4-byte words + 6
+    nr = (key_size >> 2) + 6;
+
+    compute_key_schedule(key, key_size, w);
+
+    add_round_key(state, &w[0]);
+
+    for (round = 0; round < nr; round++) {
+        sub_bytes(state);
+        shift_rows(state);
+        if(round < (nr - 1)) {
+            mix_columns(state);
+        }
+        add_round_key(state, &w[(round + 1) * 4]);
+    }
+
+    for (r = 0; r < 4; r++) {
+        for(c = 0; c < 4; c++) {
+            output_block[r + (4 * c)]  = state[r][c];
+        }
+    }
+}
