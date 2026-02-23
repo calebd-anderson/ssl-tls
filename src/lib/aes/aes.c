@@ -283,3 +283,25 @@ static void inv_sub_bytes(unsigned char state[][4]) {
         }
     }
 }
+
+// Listing 2-41: inv_mix_columns
+static void inv_mix_columns(unsigned char s[][4]) {
+    int c;
+
+    unsigned char t[4];
+
+    for (c = 0; c < 4; c++) {
+        t[0] = dot(0x0e, s[0][c]) ^ dot(0x0b, s[1][c]) ^
+               dot(0x0d, s[2][c]) ^ dot(0x09, s[3][c]);
+        t[1] = dot(0x09, s[0][c]) ^ dot(0x0e, s[1][c]) ^
+               dot(0x0b, s[2][c]) ^ dot(0x0d, s[3][c]);
+        t[2] = dot(0x0d, s[0][c]) ^ dot(0x09, s[1][c]) ^
+               dot(0x0e, s[2][c]) ^ dot(0x0b, s[3][c]);
+        t[3] = dot(0x0b, s[0][c]) ^ dot(0x0d, s[1][c]) ^
+               dot(0x09, s[2][c]) ^ dot(0x0e, s[3][c]);
+        s[0][c] = t[0];
+        s[1][c] = t[1];
+        s[2][c] = t[2];
+        s[3][c] = t[3];
+    }
+}
