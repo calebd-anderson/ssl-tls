@@ -345,3 +345,43 @@ static void aes_block_decrypt(const unsigned char *input_block,
         }
     }
 }
+
+// Listing 2-43: aes_encrypt and aes_decrypt
+# define AES_BLOCK_SIZE 16
+
+static void aes_encrypt(const unsigned char * input,
+            int input_len,
+            unsigned char *output,
+            const unsigned char *iv,
+            const unsigned char *key,
+            int key_length)
+{
+    unsigned char input_block[AES_BLOCK_SIZE];
+
+    while (input_len >= AES_BLOCK_SIZE) {
+        memcpy(input_block, input, AES_BLOCK_SIZE);
+        xor(input_block, iv, AES_BLOCK_SIZE); // implement CBC
+        aes_block_encrypt(input_block, output, key, key_length);
+        memcpy((void *) iv, (void *) output, AES_BLOCK_SIZE); // CBC
+        input += AES_BLOCK_SIZE;
+        output += AES_BLOCK_SIZE;
+        input_len += AES_BLOCK_SIZE;
+    }
+}
+
+static void aes_decrypt(const unsigned char *input,
+            int input_len,
+            unsigned char *output,
+            const unsigned char *iv,
+            const unsigned char *key,
+            int key_length)
+{
+    while (input_len >= AES_BLOCK_SIZE) {
+        aes_block_decrypt(input, output, key, key_length);
+        xor(output, iv, AES_BLOCK_SIZE);
+        memcpy((void *) iv, (void*) input, AES_BLOCK_SIZE); // CBC
+        input += AES_BLOCK_SIZE;
+        output += AES_BLOCK_SIZE;
+        input_len += AES_BLOCK_SIZE;
+    }
+}
