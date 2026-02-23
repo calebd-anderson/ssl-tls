@@ -1,5 +1,8 @@
 # Implementing SSL/TLS
-This source is my progress through the book by Joshua Davies: "[Implementing SSL/TLS Using Cryptography and PKI](https://onlinelibrary.wiley.com/doi/book/10.1002/9781118255797)".
+My progress through the book [Implementing SSL/TLS Using Cryptography and PKI](https://onlinelibrary.wiley.com/doi/book/10.1002/9781118255797) by Joshua Davies.
+
+> [!TIP]
+> Decode hex with [CyberChef](https://cyberchef.org/#recipe=From_Hex('None')).
 
 ## Environment
 - [VSCode](https://code.visualstudio.com/download)
@@ -13,11 +16,11 @@ cmake -S ./ -B ./build
 # build the main project
 cmake --build ./build
 # build just one target
-cmake --build ./build [-t <webserver|http|des|base64|hex>]
+cmake --build ./build [-t <webserver|http|base64|hex|des|aes>]
 ```
 ## Manual Test
 ### HTTP Client/Server
-#### Manual Compilation
+#### Compile manually
 ```bash
 # linux can omit linking ws2_32
 gcc -o webserver.exe ./src/webserver/webserver.c -lws2_32
@@ -71,8 +74,6 @@ gcc -DTEST_DES -g -o des -Isrc/lib/hex src/lib/des/des.c src/lib/hex/hex.c
 ./des -d twentyfourcharacterinput initialz 0xc0c48bc47e87ce17
 # 6162636465666768
 ```
-> [!TIP]
-> Decode hex at [CyberChef](https://cyberchef.org/#recipe=From_Hex('None')).
 
 ### [Advanced Encryption Standard (AES)](https://csrc.nist.gov/pubs/fips/197/final)
 ```sh
