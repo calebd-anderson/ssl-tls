@@ -433,12 +433,12 @@ int main(int argc, char *argv[]) {
     int input_len;
     int iv_len;
 
-    if (argv < 5) {
+    if (argc < 5) {
         fprintf(stderr, "Usage: %s [-e|-d] <key> <iv> <input>\n", argv[0]);
         exit(0);
     }
 
-    key_len = hex_decode(argv[2], & key);
+    key_len = hex_decode(argv[2], &key);
     iv_len = hex_decode(argv[3], &iv);
     input_len = hex_decode(argv[4], &input);
 
@@ -451,6 +451,7 @@ int main(int argc, char *argv[]) {
             aes_256_encrypt(input, input_len, ciphertext, iv, key);
         } else {
             fprintf(stderr, "Unsupported key. length: %d\n", key_len);
+            exit(0);
         }
 
         show_hex(ciphertext, input_len);
