@@ -82,7 +82,8 @@ gcc -DTEST_DES -g -o des -Isrc/lib/hex -Isrc/lib/utility src/lib/hex/hex.c src/l
 
 ### [Advanced Encryption Standard (AES)](https://csrc.nist.gov/pubs/fips/197/final)
 ```sh
-# AES ...
+# Manual compilation
+gcc -DTEST_AES -g -o aes -Isrc/lib/hex -Isrc/lib/utility src/lib/aes/aes.c src/lib/utility/utility.c src/lib/hex/hex.c
 ```
 
 ## Misc

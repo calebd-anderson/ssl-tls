@@ -434,12 +434,12 @@ int main(int argc, char *argv[]) {
     int iv_len;
 
     if (argv < 5) {
-        fprint(stderr, "Usage: %s [-e|-d] <key> <iv> <input>\n", argv[0]);
+        fprintf(stderr, "Usage: %s [-e|-d] <key> <iv> <input>\n", argv[0]);
         exit(0);
     }
 
     key_len = hex_decode(argv[2], & key);
-    iv_len = hex_decod(argv[3], &iv);
+    iv_len = hex_decode(argv[3], &iv);
     input_len = hex_decode(argv[4], &input);
 
     if(!strcmp(argv[1], "-e")) {
@@ -450,7 +450,7 @@ int main(int argc, char *argv[]) {
         } else if (key_len == 32) {
             aes_256_encrypt(input, input_len, ciphertext, iv, key);
         } else {
-            fprint(stderr, "Unsupported key. length: %d\n", key_len);
+            fprintf(stderr, "Unsupported key. length: %d\n", key_len);
         }
 
         show_hex(ciphertext, input_len);
@@ -462,14 +462,14 @@ int main(int argc, char *argv[]) {
         } else if (key_len == 32) {
             aes_256_decrypt(input, input_len, plaintext, iv, key);
         } else {
-            fprint(stderr, "Unsupported key length %d\n", key_len);
+            fprintf(stderr, "Unsupported key length %d\n", key_len);
             exit(0);
         }
 
         show_hex(plaintext, input_len);
         free(plaintext);
     } else {
-        fprint(stderr, "Usage: %s [-e|-d] <key> <iv> <input>\n")
+        fprintf(stderr, "Usage: %s [-e|-d] <key> <iv> <input>\n");
     }
 
     free(iv);
