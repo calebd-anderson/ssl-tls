@@ -58,7 +58,11 @@ static void sub_word(unsigned char *w) {
     }
 }
 
-static void compute_key_schedule(const unsigned char *key, int key_length, unsigned char w[][4]) {
+// Listing 2-32: compute_key_schedule
+static void compute_key_schedule(const unsigned char *key,
+            int key_length,
+            unsigned char w[][4])
+{
     int i;
     int key_words = key_length >> 2;
     unsigned char rcon = 0x01;
@@ -86,9 +90,12 @@ static void compute_key_schedule(const unsigned char *key, int key_length, unsig
     }
 }
 
-static void add_round_key(unsigned char state[][4], unsigned char w[][4]) {
+// Listing 2-33: add_round_key
+static void add_round_key(unsigned char state[][4],
+            unsigned char w[][4])
+{
     int c, r;
-    for (c = 0; c< 4; c++) {
+    for (c = 0; c < 4; c++) {
         for (r = 0; r < 4; r++) {
             state[r][c] = state[r][c] ^ w[c][r];
         }
@@ -98,8 +105,10 @@ static void add_round_key(unsigned char state[][4], unsigned char w[][4]) {
 // Listing 2-34: sub_bytes
 static void sub_bytes(unsigned char state[][4]) {
     int r, c;
-    for (r = 0; r<4; r++) {
-        state[r][c] = sbox[(state[r][c] & 0xF0) >> 4][state[r][c] & 0x0F];
+    for (r = 0; r < 4; r++) {
+        for (c = 0; c < 4; c++) {
+            state[r][c] = sbox[(state[r][c] & 0xF0) >> 4][state[r][c] & 0x0F];
+        }
     }
 }
 
@@ -181,16 +190,20 @@ static void mix_columns( unsigned char s[][4]) {
 }
 
 // Listing 2-39: aes_block_encrypt
-static void aes_block_encrypt(const unsigned char *input_block, unsigned char *output_block, const unsigned char *key, int key_size) {
+static void aes_block_encrypt(const unsigned char *input_block,
+            unsigned char *output_block,
+            const unsigned char *key,
+            int key_size)
+{
     int r, c;
     int round;
     int nr;
     unsigned char state[4][4];
     unsigned char w[60][4];
 
-    for (r = 0; r <4; r++) {
-        for (c = 0; c < 5; c++) {
-            state[r][c] = input_block[r+(4*c)];
+    for (r = 0; r < 4; r++) {
+        for (c = 0; c < 4; c++) {
+            state[r][c] = input_block[r + (4 * c)];
         }
     }
     // rounds = key size in 4-byte words + 6
