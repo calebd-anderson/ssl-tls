@@ -8,8 +8,9 @@ My progress through the book [Implementing SSL/TLS Using Cryptography and PKI](h
 - [VSCode](https://code.visualstudio.com/download)
   - [Windows](https://code.visualstudio.com/docs/cpp/config-mingw)
   - [Linux](https://code.visualstudio.com/docs/cpp/config-linux)
+- [Code::Blocks](https://www.codeblocks.org/)
 
-## Build the project with [CMake](https://cmake.org/download/)
+## Build the whole project with [CMake](https://cmake.org/download/)
 ```bash
 # generate the build system
 cmake -S ./ -B ./build
@@ -18,9 +19,12 @@ cmake --build ./build
 # build just one target
 cmake --build ./build [-t <webserver|http|base64|hex|des|aes>]
 ```
-## Manual Test
+## Compile & Test Manually
+### GCC Options
+- `-g`: https://gcc.gnu.org/onlinedocs/gcc-15.2.0/gcc/Debugging-Options.html#index-g
+- `-I`: https://gcc.gnu.org/onlinedocs/gcc-15.2.0/gcc/Directory-Options.html#index-I
+- `-o`: https://gcc.gnu.org/onlinedocs/gcc-15.2.0/gcc/Overall-Options.html#index-output-file-option
 ### HTTP Client/Server
-#### Compile manually
 ```bash
 # linux can omit linking ws2_32
 gcc -o webserver.exe ./src/webserver/webserver.c -lws2_32
@@ -55,10 +59,6 @@ CTRL[CMD]+C
 # Manual compilation
 gcc -DTEST_DES -g -o des -Isrc/lib/hex -Isrc/lib/utility src/lib/hex/hex.c src/lib/utility/utility.c src/lib/des/des.c
 ```
-## GCC Options
-- `-g`: https://gcc.gnu.org/onlinedocs/gcc-15.2.0/gcc/Debugging-Options.html#index-g
-- `-I`: https://gcc.gnu.org/onlinedocs/gcc-15.2.0/gcc/Directory-Options.html#index-I
-- `-o`: https://gcc.gnu.org/onlinedocs/gcc-15.2.0/gcc/Overall-Options.html#index-output-file-option
 
 > [!IMPORTANT]
 > DES is an 8 byte block cipher. Hence, the `key` and initialization vector (`iv`) must be 8 bytes and the `input` must be a multiple of 8 bytes.
@@ -85,7 +85,20 @@ gcc -DTEST_DES -g -o des -Isrc/lib/hex -Isrc/lib/utility src/lib/hex/hex.c src/l
 # Manual compilation
 gcc -DTEST_AES -g -o aes -Isrc/lib/hex -Isrc/lib/utility src/lib/aes/aes.c src/lib/utility/utility.c src/lib/hex/hex.c
 ```
+#### CLI Usage
+```sh
+# encrypt
+./aes -e passwordpassword initialzinitialz abcdefghabcdefgh 
+# eb4703ae3d8212c64c5a91ccc2c4078f
 
-## Misc
-### Free C/C++ IDE
-[Code::Blocks](https://www.codeblocks.org/)
+# decrypt
+./aes -d passwordpassword initialzinitialz 0xeb4703ae3d8212c64c5a91ccc2c4078f
+# decryption is currently broken
+```
+
+#### Compare to OpenSSL
+```sh
+# encryption
+printf 'abcdefghabcdefgh' | openssl enc -aes-128-cbc -K 70617373776f726470617373776f7264 -iv 696e697469616c7a696e697469616c7a -nopad -nosalt | xxd -p
+# eb4703ae3d8212c64c5a91ccc2c4078f
+```
