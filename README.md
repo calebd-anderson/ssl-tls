@@ -53,8 +53,13 @@ CTRL[CMD]+C
 > DES is intended to be used as a library. Yet, a test routine is included that can be enabled with the compiler option `-DTEST_DES`.  
 ```sh
 # Manual compilation
-gcc -DTEST_DES -g -o des -Isrc/lib/hex src/lib/des/des.c src/lib/hex/hex.c
+gcc -DTEST_DES -g -o des -Isrc/lib/hex -Isrc/lib/utility src/lib/hex/hex.c src/lib/utility/utility.c src/lib/des/des.c
 ```
+## GCC Options
+- `-g`: https://gcc.gnu.org/onlinedocs/gcc-15.2.0/gcc/Debugging-Options.html#index-g
+- `-I`: https://gcc.gnu.org/onlinedocs/gcc-15.2.0/gcc/Directory-Options.html#index-I
+- `-o`: https://gcc.gnu.org/onlinedocs/gcc-15.2.0/gcc/Overall-Options.html#index-output-file-option
+
 > [!IMPORTANT]
 > DES is an 8 byte block cipher. Hence, the `key` and initialization vector (`iv`) must be 8 bytes and the `input` must be a multiple of 8 bytes.
 ```sh
