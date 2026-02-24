@@ -3,19 +3,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <hex.h>
+#include <utility.h>
 
 // this does not return a 1 for a 1 bit; it just returns non-zero
 #define GET_BIT(array, bit) (array[(int)(bit / 8)] & (0x80 >> (bit % 8)))
 #define SET_BIT(array, bit) (array[(int)(bit / 8)] |= (0x80 >> (bit % 8)))
 #define CLEAR_BIT(array, bit) (array[(int)(bit / 8)] &= ~(0x80 >> (bit % 8)))
-
-static void xor(unsigned char *target, const unsigned char *src, int len)
-{
-    while (len--)
-    {
-        *target++ ^= *src++;
-    }
-}
 
 /**
  * Implement the initial and final permutation functions. permute_table

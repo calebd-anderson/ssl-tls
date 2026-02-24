@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <hex.h>
+#include <utility.h>
 
 static void rot_word(unsigned char *w) {
     unsigned char tmp;
