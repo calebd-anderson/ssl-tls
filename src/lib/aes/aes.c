@@ -180,7 +180,7 @@ static void mix_columns( unsigned char s[][4]) {
         t[0] = dot(2, s[0][c]) ^ dot(3, s[1][c]) ^ s[2][c] ^ s[3][c];
         t[1] = s[0][c] ^ dot(2, s[1][c]) ^ dot(3, s[2][c]) ^ s[3][c];
         t[2] = s[0][c] ^ s[1][c] ^ dot(2, s[2][c]) ^ dot(3, s[3][c]);
-        t[3] = dot(3, s[0][c]) ^ dot(3, s[1][c]) ^ s[2][c] ^ dot(2, s[3][c]);
+        t[3] = dot(3, s[0][c]) ^ s[1][c] ^ s[2][c] ^ dot(2, s[3][c]);
 
         s[0][c] = t[0];
         s[1][c] = t[1];
