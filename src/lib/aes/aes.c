@@ -363,7 +363,7 @@ static void aes_block_decrypt(const unsigned char *input_block,
 // Listing 2-43: aes_encrypt and aes_decrypt
 # define AES_BLOCK_SIZE 16
 
-static void aes_encrypt(const unsigned char * input,
+static void aes_encrypt(const unsigned char *input,
             int input_len,
             unsigned char *output,
             const unsigned char *iv,
@@ -379,7 +379,7 @@ static void aes_encrypt(const unsigned char * input,
         memcpy((void *) iv, (void *) output, AES_BLOCK_SIZE); // CBC
         input += AES_BLOCK_SIZE;
         output += AES_BLOCK_SIZE;
-        input_len += AES_BLOCK_SIZE;
+        input_len -= AES_BLOCK_SIZE;
     }
 }
 
@@ -396,7 +396,7 @@ static void aes_decrypt(const unsigned char *input,
         memcpy((void *) iv, (void*) input, AES_BLOCK_SIZE); // CBC
         input += AES_BLOCK_SIZE;
         output += AES_BLOCK_SIZE;
-        input_len += AES_BLOCK_SIZE;
+        input_len -= AES_BLOCK_SIZE;
     }
 }
 
@@ -483,7 +483,7 @@ int main(int argc, char *argv[]) {
         show_hex(plaintext, input_len);
         free(plaintext);
     } else {
-        fprintf(stderr, "Usage: %s [-e|-d] <key> <iv> <input>\n");
+        fprintf(stderr, "Usage: %s [-e|-d] <key> <iv> <input>\n", argv[0]);
     }
 
     free(iv);
