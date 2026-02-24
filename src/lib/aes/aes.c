@@ -385,3 +385,94 @@ static void aes_decrypt(const unsigned char *input,
         input_len += AES_BLOCK_SIZE;
     }
 }
+
+// Listing 2-44: encryption and decryption routines
+void aes_128_encrypt(const unsigned char *plaintext,
+     const int plaintext_len,
+     unsigned char ciphertext[],
+     const unsigned char *iv,
+     const unsigned char *key)
+{
+    aes_encrypt(plaintext, plaintext_len, ciphertext, iv, key, 16);
+}
+
+void aes_128_decrypt(const unsigned char *ciphertext,
+     const int ciphertext_len,
+     unsigned char plaintext[],
+     const unsigned char *iv,
+     const unsigned char *key)
+{
+    aes_decrypt(ciphertext, ciphertext_len, plaintext, iv, key, 16);
+}
+
+void aes_256_encrypt(const unsigned char *plaintext,
+     const int plaintext_len,
+     unsigned char ciphertext[],
+     const unsigned char *iv,
+     const unsigned char *key)
+{
+    aes_encrypt(plaintext, plaintext_len, ciphertext, iv, key, 32);
+}
+
+void aes_256_decrypt(const unsigned char *ciphertext,
+     const int ciphertext_len,
+     unsigned char plaintext[],
+     const unsigned char *iv,
+     const unsigned char *key)
+{
+    aes_decrypt(ciphertext, ciphertext_len, plaintext, iv, key, 32);
+}
+
+#ifdef TEST_AES
+int main(int argc, char *argv[]) {
+    unsigned char *key;
+    unsigned char *input;
+    unsigned char *iv;
+    int key_len;
+    int input_len;
+    int iv_len;
+
+    if (argv < 5) {
+        fprint(stderr, "Usage: %s [-e|-d] <key> <iv> <input>\n", argv[0]);
+        exit(0);
+    }
+
+    key_len = hex_decode(argv[2], & key);
+    iv_len = hex_decod(argv[3], &iv);
+    input_len = hex_decode(argv[4], &input);
+
+    if(!strcmp(argv[1], "-e")) {
+        unsigned char *ciphertext = (unsigned char *) malloc(input_len);
+
+        if (key_len == 16) {
+            aes_128_encrypt(input, input_len, ciphertext, iv, key);
+        } else if (key_len == 32) {
+            aes_256_encrypt(input, input_len, ciphertext, iv, key);
+        } else {
+            fprint(stderr, "Unsupported key. length: %d\n", key_len);
+        }
+
+        show_hex(ciphertext, input_len);
+        free(ciphertext);
+    } else if (!strcmp(argv[1], "-d")) {
+        unsigned char *plaintext = (unsigned char *) malloc(input_len);
+        if (key_len == 16) {
+            aes_128_decrypt(input, input_len, plaintext, iv, key);
+        } else if (key_len == 32) {
+            aes_256_decrypt(input, input_len, plaintext, iv, key);
+        } else {
+            fprint(stderr, "Unsupported key length %d\n", key_len);
+            exit(0);
+        }
+
+        show_hex(plaintext, input_len);
+        free(plaintext);
+    } else {
+        fprint(stderr, "Usage: %s [-e|-d] <key> <iv> <input>\n")
+    }
+
+    free(iv);
+    free(key);
+    free(input);
+}
+#endif
