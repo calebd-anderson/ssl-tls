@@ -20,7 +20,7 @@ static unsigned char sbox[16][16] = {
     {0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5,
     0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76},
     {0xca, 0x82, 0xc9, 0x7d, 0xfa, 0x59, 0x47, 0xf0,
-    0xad, 0xd4, 0xa2, 0xaf, 0x9c, 0xa4, 0x72, 0xc0,},
+    0xad, 0xd4, 0xa2, 0xaf, 0x9c, 0xa4, 0x72, 0xc0},
     {0xb7, 0xfd, 0x93, 0x26, 0x36, 0x3f, 0xf7, 0xcc,
     0x34, 0xa5, 0xe5, 0xf1, 0x71, 0xd8, 0x31, 0x15},
     {0x04, 0xc7, 0x23, 0xc3, 0x18, 0x96, 0x05, 0x9a,
@@ -69,7 +69,7 @@ static void compute_key_schedule(const unsigned char *key,
 
     // First, copy the key directly into the key schedule
     memcpy(w, key, key_length);
-    for (i = key_words; i < 4 * (key_words + 7) ; i++) {
+    for (i = key_words; i < 4 * (key_words + 7); i++) {
         memcpy (w[i], w[i - 1], 4);
         if (!(i % key_words)) {
             rot_word(w[i]);
@@ -125,6 +125,7 @@ static void shift_rows(unsigned char state[][4]) {
     tmp = state[2][0];
     state[2][0] = state[2][2];
     state[2][2] = tmp;
+    tmp = state[2][1];
     state[2][1] = state[2][3];
     state[2][3] = tmp;
 
@@ -154,7 +155,7 @@ static void matrix_multiply(unsigned char m1[4][4], unsigned char m2[4][4], unsi
 // special binary multiplication
 // adding is XORing, multiplying is dot-ing
 unsigned char xtime ( unsigned char x ) {
-    return ( x << 1 ) ^ ( ( x & 0x80 ) ? 0x1b : 0x00 );
+    return (x << 1) ^ ((x & 0x80 ) ? 0x1b : 0x00);
 }
 
 unsigned char dot( unsigned char x, unsigned char y ) {
@@ -162,11 +163,11 @@ unsigned char dot( unsigned char x, unsigned char y ) {
     unsigned char product = 0;
 
     for (mask = 0x01; mask; mask <<= 1 ) {
-        if ( y & mask )
+        if (y & mask)
         {
             product ^= x;
         }
-        x = xtime( x );
+        x = xtime(x);
     }
     return product;
 }
@@ -248,7 +249,7 @@ static void inv_shift_rows(unsigned char state[][4]) {
 
     tmp = state[3][0];
     state[3][0] = state[3][1];
-    state[3][1] = state[3][1];
+    state[3][1] = state[3][2];
     state[3][2] = state[3][3];
     state[3][3] = tmp;
 }
@@ -274,7 +275,7 @@ static unsigned char inv_sbox[16][16] = {
     0x97, 0xf2, 0xcf, 0xce, 0xf0, 0xb4, 0xe6, 0x73 },
     { 0x96, 0xac, 0x74, 0x22, 0xe7, 0xad, 0x35, 0x85,
     0xe2, 0xf9, 0x37, 0xe8, 0x1c, 0x75, 0xdf, 0x6e },
-    {0x47, 0xf1, 0x1a, 0x71, 0x1d, 0x29, 0xc5, 0x89,
+    { 0x47, 0xf1, 0x1a, 0x71, 0x1d, 0x29, 0xc5, 0x89,
     0x6f, 0xb7, 0x62, 0x0e, 0xaa, 0x18, 0xbe, 0x1b },
     { 0xfc, 0x56, 0x3e, 0x4b, 0xc6, 0xd2, 0x79, 0x20,
     0x9a, 0xdb, 0xc0, 0xfe, 0x78, 0xcd, 0x5a, 0xf4 },
@@ -347,7 +348,7 @@ static void aes_block_decrypt(const unsigned char *input_block,
         inv_shift_rows(state);
         inv_sub_bytes(state);
         add_round_key(state, &w[(round -1) * 4]);
-        if(round > 1) {
+        if (round > 1) {
             inv_mix_columns(state);
         }
     }
@@ -392,7 +393,7 @@ static void aes_decrypt(const unsigned char *input,
     while (input_len >= AES_BLOCK_SIZE) {
         aes_block_decrypt(input, output, key, key_length);
         xor(output, iv, AES_BLOCK_SIZE);
-        memcpy((void *) iv, (void*) input, AES_BLOCK_SIZE); // CBC
+        memcpy((void *) iv, (void *) input, AES_BLOCK_SIZE); // CBC
         input += AES_BLOCK_SIZE;
         output += AES_BLOCK_SIZE;
         input_len -= AES_BLOCK_SIZE;
