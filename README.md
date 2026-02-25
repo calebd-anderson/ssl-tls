@@ -93,7 +93,7 @@ gcc -DTEST_AES -g -o aes -Isrc/lib/hex -Isrc/lib/utility src/lib/aes/aes.c src/l
 
 # decrypt
 ./aes -d passwordpassword initialzinitialz 0xeb4703ae3d8212c64c5a91ccc2c4078f
-# decryption is currently broken
+# 61626364656667686162636465666768
 ```
 
 #### Compare to OpenSSL
@@ -101,4 +101,8 @@ gcc -DTEST_AES -g -o aes -Isrc/lib/hex -Isrc/lib/utility src/lib/aes/aes.c src/l
 # encryption
 printf 'abcdefghabcdefgh' | openssl enc -aes-128-cbc -K 70617373776f726470617373776f7264 -iv 696e697469616c7a696e697469616c7a -nopad -nosalt | xxd -p
 # eb4703ae3d8212c64c5a91ccc2c4078f
+
+# decryption
+printf 'eb4703ae3d8212c64c5a91ccc2c4078f' | xxd -r -p | openssl enc -d -aes-128-cbc -K 70617373776f726470617373776f7264 -iv 696e697469616c7a696e697469616c7a -nopad -nosalt | xxd -p
+# 61626364656667686162636465666768
 ```
