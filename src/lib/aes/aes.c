@@ -224,8 +224,8 @@ static void aes_block_encrypt(const unsigned char *input_block,
     }
 
     for (r = 0; r < 4; r++) {
-        for(c = 0; c < 4; c++) {
-            output_block[r + (4 * c)]  = state[r][c];
+        for (c = 0; c < 4; c++) {
+            output_block[r + (4 * c)] = state[r][c];
         }
     }
 }
@@ -347,7 +347,7 @@ static void aes_block_decrypt(const unsigned char *input_block,
     for (round = nr; round > 0; round--) {
         inv_shift_rows(state);
         inv_sub_bytes(state);
-        add_round_key(state, &w[(round -1) * 4]);
+        add_round_key(state, &w[(round - 1) * 4]);
         if (round > 1) {
             inv_mix_columns(state);
         }
