@@ -106,3 +106,10 @@ printf 'abcdefghabcdefgh' | openssl enc -aes-128-cbc -K 70617373776f726470617373
 printf 'eb4703ae3d8212c64c5a91ccc2c4078f' | xxd -r -p | openssl enc -d -aes-128-cbc -K 70617373776f726470617373776f7264 -iv 696e697469616c7a696e697469616c7a -nopad -nosalt | xxd -p
 # 61626364656667686162636465666768
 ```
+
+## Other Ciphers
+- blowfish
+- twofish
+- FEAL
+- LOKI
+- Camelia
